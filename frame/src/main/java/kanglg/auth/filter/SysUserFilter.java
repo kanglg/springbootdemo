@@ -1,6 +1,7 @@
-package kanglg.config;
+package kanglg.auth.filter;
 
 import kanglg.auth.service.UserService;
+import kanglg.config.Constants;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.springframework.beans.factory.annotation.Autowired;

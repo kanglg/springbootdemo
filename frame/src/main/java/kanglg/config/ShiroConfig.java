@@ -1,12 +1,15 @@
 package kanglg.config;
 
 import com.google.common.collect.Maps;
+import kanglg.auth.filter.SysUserFilter;
 import kanglg.auth.realm.UserRealm;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,18 +24,32 @@ import java.util.Map;
  */
 @Configuration
 public class ShiroConfig {
+    @Value("${shiro.credentialsMatcher.hashIterations}")
+    private int hashIterations;
+    @Value("${shiro.credentialsMatcher.storedCredentialsHexEncoded}")
+    private boolean storedCredentialsHexEncoded;
 
-    @Bean(name = "lifecycleBeanPostProcessor")
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
-        return new LifecycleBeanPostProcessor();
+    @Configuration
+    protected static class Processor {
+        @Bean
+        public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+            return new LifecycleBeanPostProcessor();
+        }
+
+        @Bean
+        public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+            final DefaultAdvisorAutoProxyCreator proxyCreator = new DefaultAdvisorAutoProxyCreator();
+            proxyCreator.setProxyTargetClass(true);
+            return proxyCreator;
+        }
     }
 
     @Bean("credentialsMatcher")
     public HashedCredentialsMatcher getCredentialsMatcher() {
         HashedCredentialsMatcher credentialsMatcher = new HashedCredentialsMatcher();
         credentialsMatcher.setHashAlgorithmName("MD5");
-        credentialsMatcher.setHashIterations(2);
-        credentialsMatcher.setStoredCredentialsHexEncoded(false);
+        credentialsMatcher.setHashIterations(hashIterations);
+        credentialsMatcher.setStoredCredentialsHexEncoded(storedCredentialsHexEncoded);
         return credentialsMatcher;
     }
 
@@ -69,8 +86,8 @@ public class ShiroConfig {
         filterMap.put("sysUser", sysUserFilter);
         shiroFilterFactoryBean.setFilters(filterMap);
         Map<String, String> filterChainDefinitionMap = Maps.newHashMap();
-        filterChainDefinitionMap.put("/", "authc");
-        filterChainDefinitionMap.put("/**", "user,sysUser");
+//        filterChainDefinitionMap.put("/", "authc");
+        filterChainDefinitionMap.put("/**", "sysUser");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }
