@@ -99,7 +99,16 @@ public class ShiroConfig {
         bean.setArguments(new Object[] {
                 securityManager
         });
+        return bean;
+    }
 
+    @Bean
+    public MethodInvokingFactoryBean methodInvokingFactoryBean() {
+        MethodInvokingFactoryBean bean = new MethodInvokingFactoryBean();
+        bean.setStaticMethod("kanglg.util.EndecryptUtils.setHashIterations");
+        bean.setArguments(new Object[] {
+                hashIterations
+        });
         return bean;
     }
 }
