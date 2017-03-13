@@ -5,7 +5,7 @@ import kanglg.auth.dao.RoleDao;
 import kanglg.auth.dao.UserDao;
 import kanglg.auth.entity.BSysUser;
 import kanglg.util.EndecryptUtils;
-import kanglg.util.RandomUtil;
+import kanglg.util.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -73,7 +73,7 @@ public class UserService {
      * @return 持久化用户
      */
     public BSysUser addUser(BSysUser user) {
-        user.setUserId(RandomUtil.uuid());
+        user.setUserId(RandomUtils.uuid());
         user.setUserPassword(EndecryptUtils.MD5Password(user.getUserPassword(), user.getUserAccount()));
         return userDao.save(user);
     }

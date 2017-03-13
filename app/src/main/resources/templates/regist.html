@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>hello</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <h1>注册用户</h1>
+    <!--/*@thymesVar id="user" type="kanglg.auth.entity.BSysUser"*/-->
+    <p th:text="${user.userName}"></p>
+    <form method="post" th:action="@{/regist}">
+        <label>
+            账号：
+            <input name="username" type="text"/>
+        </label>
+        <br/>
+        <label>
+            密码：
+            <input name="password" type="password"/>
+        </label>
+        <br/>
+        <button type="submit">提交</button>
+    </form>
+</body>
+</html>
