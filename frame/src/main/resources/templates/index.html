@@ -5,20 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<!--/*@thymesVar id="name" type="java.lang.String"*/-->
-<p th:text="'Hello！, ' + ${name} + '!'" >欢迎</p>
-<form method="post" th:action="@{/login}">
-    <label>
-        账号：
-        <input name="username" type="text" value="admin"/>
-    </label>
-    <br/>
-    <label>
-        密码：
-        <input name="password" type="password" value="admin"/>
-    </label>
-    <br/>
-    <button type="submit">提交</button>
-</form>
+<!--/*@thymesVar id="user" type="kanglg.auth.entity.BSysUser"*/-->
+<p th:text="'Hello！, ' + ${user.userName} + '!'" >欢迎</p>
 </body>
 </html>

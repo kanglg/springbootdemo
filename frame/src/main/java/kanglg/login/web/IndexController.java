@@ -25,8 +25,8 @@ public class IndexController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String index(Model model) {
-        model.addAttribute("name", "kanglg");
+    public String index(Model model, @CurrentUser BSysUser user) {
+        model.addAttribute("user", user);
         return "index";
     }
 

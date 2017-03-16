@@ -3,10 +3,12 @@ package kanglg.config;
 import com.google.common.collect.Maps;
 import kanglg.auth.filter.SysUserFilter;
 import kanglg.auth.realm.UserRealm;
+import kanglg.auth.service.UserService;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Value;
@@ -86,8 +88,8 @@ public class ShiroConfig {
         filterMap.put("sysUser", sysUserFilter);
         shiroFilterFactoryBean.setFilters(filterMap);
         Map<String, String> filterChainDefinitionMap = Maps.newHashMap();
-//        filterChainDefinitionMap.put("/", "authc");
-        filterChainDefinitionMap.put("/**", "sysUser");
+        filterChainDefinitionMap.put("/login", "anon");
+        filterChainDefinitionMap.put("/**", "sysUser,user");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }
@@ -103,12 +105,16 @@ public class ShiroConfig {
     }
 
     @Bean
-    public MethodInvokingFactoryBean methodInvokingFactoryBean() {
-        MethodInvokingFactoryBean bean = new MethodInvokingFactoryBean();
-        bean.setStaticMethod("kanglg.util.EndecryptUtils.setHashIterations");
-        bean.setArguments(new Object[] {
-                hashIterations
-        });
-        return bean;
+    public FormAuthenticationFilter formAuthenticationFilter() {
+        FormAuthenticationFilter filter = new FormAuthenticationFilter();
+        filter.setLoginUrl("/login");
+        filter.setPasswordParam("password");
+        filter.setUsernameParam("username");
+        return filter;
+    }
+
+    @Bean
+    public SysUserFilter sysUserFilter(UserService userService) {
+        return new SysUserFilter(userService);
     }
 }
